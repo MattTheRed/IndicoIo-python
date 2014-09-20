@@ -1,8 +1,9 @@
-import unittest
+import unittest, sys
 
 import numpy as np
 
 from indicoio import political, sentiment, fer, facial_features, language
+from indicoio.utils import config
 
 
 class FullAPIRun(unittest.TestCase):
@@ -19,8 +20,9 @@ class FullAPIRun(unittest.TestCase):
         posneg_set = set(['Sentiment'])
         test_string = "Worst song ever."
         response = sentiment(test_string)
+        print response
 
-        self.assertTrue(isinstance(response, dict))
+        self.assertTrue(isinstance(response, float))
         self.assertEqual(posneg_set, set(response.keys()))
 
     def test_good_fer(self):
@@ -88,4 +90,7 @@ class FullAPIRun(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    # test on development server
+    config.api_root_url = "http://localhost:8000/"
+
     unittest.main()

@@ -4,7 +4,7 @@ import requests
 import numpy as np
 
 from indicoio import JSON_HEADERS
-from indicoio.utils import image_preprocess
+from indicoio.utils import image_preprocess, config
 
 def facial_features(image):
     """
@@ -29,13 +29,13 @@ def facial_features(image):
     :rtype: List containing feature responses
     """
     
-    data_dict = json.dumps({"face": image})
-    response = requests.post("http://api.indico.io/facialfeatures", data=data_dict, headers=JSON_HEADERS)
+    data_dict = json.dumps({"data": image})
+    response = requests.post(config.api_root_url + "facialfeatures", data=data_dict, headers=JSON_HEADERS)
     response_dict = response.json()
-    if 'response' not in response_dict:
+    if 'results' not in response_dict:
       raise ValueError(response_dict.values()[0])
     else:
-      return response_dict['response']
+      return response_dict['results']
 
 def image_features(image):
     """
@@ -68,10 +68,10 @@ def image_features(image):
     :rtype: List containing features
     """
     image = image_preprocess(image)
-    data_dict = json.dumps({"image": image})
-    response = requests.post("http://api.indico.io/imagefeatures", data=data_dict, headers=JSON_HEADERS)
+    data_dict = json.dumps({"data": image})
+    response = requests.post(config.api_root_url + "imagefeatures", data=data_dict, headers=JSON_HEADERS)
     response_dict = response.json()
-    if 'Features' not in response_dict:
+    if 'results' not in response_dict:
       raise ValueError(response_dict.values()[0])
     else:
-      return response_dict['Features']
+      return response_dict['results']

@@ -104,3 +104,7 @@ def image_preprocess(image):
     image = resize(image,(64,64))
     image = image.tolist()
     return image
+
+class Config(): pass
+config = Config()
+config.root_api_url = "http://api.indico.io/"

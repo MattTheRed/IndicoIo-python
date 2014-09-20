@@ -2,7 +2,7 @@ import requests
 import json
 
 from indicoio import JSON_HEADERS
-from indicoio.utils import normalize
+from indicoio.utils import normalize, config
 
 def political(text):
     """
@@ -30,8 +30,8 @@ def political(text):
     :rtype: Dictionary of party probability pairs
     """
 
-    data_dict = json.dumps({'text': text})
-    response = requests.post("http://api.indico.io/political", data=data_dict, headers=JSON_HEADERS)
+    data_dict = json.dumps({'data': text})
+    response = requests.post(config.api_root_url + "political", data=data_dict, headers=JSON_HEADERS)
     response_dict = response.json()
     if len(response_dict) < 2:
       raise ValueError(response_dict.values()[0])
@@ -59,10 +59,10 @@ def posneg(text):
     :rtype: Float
     """
     
-    data_dict = json.dumps({'text': text})
-    response = requests.post("http://api.indico.io/sentiment", data=data_dict, headers=JSON_HEADERS)
+    data_dict = json.dumps({'data': text})
+    response = requests.post(config.api_root_url + "sentiment", data=data_dict, headers=JSON_HEADERS)
     response_dict = response.json()
-    if 'Sentiment' not in response_dict:
+    if 'results' not in response_dict:
       raise ValueError(response_dict.values()[0])
     else:
-      return response_dict['Sentiment']
+      return response_dict['results']
