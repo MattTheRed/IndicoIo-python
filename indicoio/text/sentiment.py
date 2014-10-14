@@ -18,7 +18,7 @@ def political(api_root, text):
        Hopefully, driverless cars will chance economics from ownership to fee for service.'
        >>> affiliation = political(text)
        >>> affiliation
-       {u'Libertarian': 0.4923755446986322, u'Green': 0.2974443102818122, 
+       {u'Libertarian': 0.4923755446986322, u'Green': 0.2974443102818122,
        u'Liberal': 0.13730032938784784, u'Conservative': 0.07287981563170784}
        >>> least_like = affiliation.keys()[np.argmin(affiliation.values())]
        >>> most_like = affiliation.keys()[np.argmax(affiliation.values())]
@@ -30,13 +30,14 @@ def political(api_root, text):
     :rtype: Dictionary of party probability pairs
     """
 
-    data_dict = json.dumps({'text': text})
+    data_dict = json.dumps({'data': text})
     response = requests.post(api_root + "political", data=data_dict, headers=JSON_HEADERS)
     response_dict = response.json()
-    if len(response_dict) < 2:
-      raise ValueError(response_dict.values()[0])
+    results = response_dict['results']
+    if len(results) < 2:
+      raise ValueError(results.values()[0])
     else:
-      return response_dict
+      return results
 
 def posneg(api_root, text):
     """
@@ -58,11 +59,11 @@ def posneg(api_root, text):
     :type text: str or unicode
     :rtype: Float
     """
-    
-    data_dict = json.dumps({'text': text})
+
+    data_dict = json.dumps({'data': text})
     response = requests.post(api_root + "sentiment", data=data_dict, headers=JSON_HEADERS)
     response_dict = response.json()
-    if 'Sentiment' not in response_dict:
+    if 'results' not in response_dict:
       raise ValueError(response_dict.values()[0])
     else:
-      return response_dict['Sentiment']
+      return response_dict['results']

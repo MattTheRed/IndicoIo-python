@@ -5,7 +5,7 @@ from indicoio import JSON_HEADERS
 
 def language(api_root, text):
     """
-    Given input text, returns a probability distribution over 33 possible 
+    Given input text, returns a probability distribution over 33 possible
     languages of what language the text was written in.
 
     Example usage:
@@ -25,11 +25,12 @@ def language(api_root, text):
     :type text: str or unicode
     :rtype: Dictionary of language probability pairs
     """
-    
-    data_dict = json.dumps({'text': text})
+
+    data_dict = json.dumps({'data': text})
     response = requests.post(api_root + "language", data=data_dict, headers=JSON_HEADERS)
     response_dict = response.json()
-    if len(response_dict) < 2:
-      raise ValueError(response_dict.values()[0])
+    results = response_dict['results']
+    if len(results) < 2:
+      raise ValueError(results.values()[0])
     else:
-      return response_dict
+      return results
