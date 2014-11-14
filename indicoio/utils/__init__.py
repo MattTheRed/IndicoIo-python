@@ -1,11 +1,17 @@
-import inspect, json, requests
+import inspect, json
+
+import requests
+import msgpack
+import msgpack_numpy as m
 import numpy as np
 from skimage.transform import resize
 
 from indicoio import JSON_HEADERS
 
+m.patch()
+
 def api_handler(arg, url):
-    data_dict = json.dumps({'data': arg})
+    data_dict = msgpack.packb({'data': arg, 'language': 'python'})
     response = requests.post(url, data=data_dict, headers=JSON_HEADERS).json()
     results = response.get('results', False)
     if not results:
