@@ -4,23 +4,32 @@ import numpy as np
 from skimage.transform import resize
 
 from indicoio import JSON_HEADERS
+from indicoio.config import auth, auth_file
 
 def auth_query():
-    email = os.environ.get("INDICO_EMAIL")
-    password = os.environ.get("INDICO_PASSWORD")
+    """ Attach username and password to request """
+    email = auth.get("INDICO_EMAIL") or os.environ.get("INDICO_EMAIL")
+    password = auth.get("INDICO_PASSWORD") or os.environ.get("INDICO_PASSWORD")
 
     # store settings
-    if not email:
+    if not email or not password:
         email = raw_input("Email: ")
-        os.environ["INDICO_EMAIL"] = email
-
-    if not password:
         password = getpass.getpass("Password: ")
+        
+        os.environ["INDICO_EMAIL"] = email
         os.environ["INDICO_PASSWORD"] = password
+
+        config = {
+            "INDICO_EMAIL": email,
+            "INDICO_PASSWORD": password
+        }
+
+        json.dump(config, open(auth_file, 'w'))
 
     return (email, password)
 
 def api_handler(arg, url, batch=False, auth=None):
+    """ Handles the core formatting work """
     data_dict = json.dumps({'data': arg})
     if batch:
         url += "/batch"
